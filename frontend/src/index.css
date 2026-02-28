@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ghana-green: #006B3F;
+  --color-ghana-green-light: #008C52;
+  --color-ghana-gold: #FCD116;
+  --color-ghana-gold-dark: #E0B800;
+  --color-ghana-red: #CE1126;
+}
+
+body {
+  @apply bg-gray-50 text-gray-900 min-h-screen;
+}

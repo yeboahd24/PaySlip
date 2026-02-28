@@ -1,0 +1,34 @@
+from app.config.tax_bands import MONTHLY_TAX_BANDS
+
+
+def calculate_paye(chargeable_income: float) -> dict:
+    total_tax = 0.0
+    breakdown = []
+    remaining = chargeable_income
+
+    for i, band in enumerate(MONTHLY_TAX_BANDS):
+        lower = band["lower"]
+        upper = band["upper"]
+        rate = band["rate"]
+
+        band_size = (upper - lower) if upper else remaining
+        income_in_band = min(remaining, band_size)
+
+        if income_in_band <= 0:
+            break
+
+        tax = round(income_in_band * rate, 2)
+        total_tax += tax
+        breakdown.append({
+            "band": i + 1,
+            "income_in_band": round(income_in_band, 2),
+            "rate": rate,
+            "tax": tax,
+        })
+        remaining -= income_in_band
+
+    return {
+        "chargeable_income": round(chargeable_income, 2),
+        "total_tax": round(total_tax, 2),
+        "band_breakdown": breakdown,
+    }

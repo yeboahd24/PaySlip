@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pip install:*)",
+      "Bash(docker compose:*)",
+      "Bash(curl:*)",
+      "Bash(node:*)",
+      "Bash(npm create:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run:*)",
+      "WebFetch(domain:gra.gov.gh)",
+      "WebFetch(domain:www.ssnit.org.gh)",
+      "WebFetch(domain:www.npra.gov.gh)",
+      "WebSearch",
+      "WebFetch(domain:taxsummaries.pwc.com)",
+      "WebFetch(domain:www.acciyo.com)",
+      "WebFetch(domain:www.smartlinkerp.com)",
+      "WebFetch(domain:psweps.gov.gh)",
+      "WebFetch(domain:africapay.org)",
+      "Bash(python:*)",
+      "Bash(python3:*)"
+    ]
+  }
+}
