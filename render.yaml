@@ -7,3 +7,17 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: "3.11.0"
+
+  - type: web
+    name: ghana-payslip-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_URL
+        value: https://payslip-h1r2.onrender.com
