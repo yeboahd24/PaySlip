@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-ghana-green: #006B3F;
   --color-ghana-green-light: #008C52;
@@ -9,5 +11,5 @@
 }
 
 body {
-  @apply bg-gray-50 text-gray-900 min-h-screen;
+  @apply bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen;
 }

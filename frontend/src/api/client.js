@@ -27,3 +27,15 @@ export async function apiGet(path) {
 
   return res.json();
 }
+
+export function calculateForward(payload) {
+  return apiPost('/api/v1/calculate', payload);
+}
+
+export function calculateReverse(payload) {
+  return apiPost('/api/v1/reverse-calculate', payload);
+}
+
+export function calculateBulk(payload) {
+  return apiPost('/api/v1/calculate-bulk', payload);
+}

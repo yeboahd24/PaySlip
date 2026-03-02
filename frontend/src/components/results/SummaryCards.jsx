@@ -15,17 +15,17 @@ export default function SummaryCards({ summary }) {
       <Card
         label="Gross Income"
         amount={summary.gross_income}
-        colorClass="bg-green-50 text-green-800 border border-green-200"
+        colorClass="bg-green-50 dark:bg-green-900/30 text-green-800 dark:text-green-300 border border-green-200 dark:border-green-800"
       />
       <Card
         label="Total Deductions"
         amount={summary.total_deductions}
-        colorClass="bg-red-50 text-red-800 border border-red-200"
+        colorClass="bg-red-50 dark:bg-red-900/30 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800"
       />
       <Card
         label="Net Take-Home"
         amount={summary.net_take_home}
-        colorClass="bg-amber-50 text-amber-800 border border-amber-200"
+        colorClass="bg-amber-50 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800"
       />
     </div>
   );

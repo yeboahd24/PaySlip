@@ -18,7 +18,9 @@
       "WebFetch(domain:psweps.gov.gh)",
       "WebFetch(domain:africapay.org)",
       "Bash(python:*)",
-      "Bash(python3:*)"
+      "Bash(python3:*)",
+      "Bash(pip3 install:*)",
+      "Bash(npx vite:*)"
     ]
   }
 }

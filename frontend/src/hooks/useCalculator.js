@@ -1,19 +1,27 @@
-import { useState } from 'react';
-import { apiPost } from '../api/client';
+import { useState, useRef, useCallback, useEffect } from 'react';
+import { calculateForward, calculateReverse } from '../api/client';
 
 export function useCalculator() {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [mode, setMode] = useState('forward'); // 'forward' | 'reverse'
+  const debounceRef = useRef(null);
 
   async function calculate(payload) {
     setLoading(true);
     setError(null);
     try {
-      const data = await apiPost('/api/v1/calculate', payload);
-      setResult(data);
+      let data;
+      if (mode === 'reverse') {
+        data = await calculateReverse(payload);
+        // Reverse returns { required_basic_salary, result }
+        setResult({ ...data.result, required_basic_salary: data.required_basic_salary });
+      } else {
+        data = await calculateForward(payload);
+        setResult(data);
+      }
     } catch (err) {
-      // Extract validation error messages from 422 responses
       if (err.status === 422 && err.data?.detail) {
         const messages = Array.isArray(err.data.detail)
           ? err.data.detail.map((d) => d.msg).join('. ')
@@ -28,5 +36,21 @@ export function useCalculator() {
     }
   }
 
-  return { result, loading, error, calculate };
+  const debouncedCalculate = useCallback(
+    (payload) => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      debounceRef.current = setTimeout(() => {
+        calculate(payload);
+      }, 400);
+    },
+    [mode],
+  );
+
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, []);
+
+  return { result, loading, error, calculate, debouncedCalculate, mode, setMode };
 }

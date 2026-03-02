@@ -3,10 +3,38 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Ghana Take-Home Pay Calculator</title>
+    <title>Ghana Take-Home Pay Calculator | PAYE, SSNIT & Pension</title>
+    <meta name="description" content="Calculate your Ghana take-home pay with PAYE tax bands, SSNIT, Tier 2 pension, reliefs, reverse calculation, and employer cost. Free, instant, and accurate." />
+    <meta name="keywords" content="Ghana tax calculator, PAYE calculator, SSNIT, Tier 2 pension, take-home pay, GRA, salary calculator Ghana" />
+    <meta name="theme-color" content="#006B3F" />
+    <link rel="canonical" href="https://ghpay.app/" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Ghana Take-Home Pay Calculator" />
+    <meta property="og:description" content="Calculate your Ghana take-home pay with PAYE tax, SSNIT, Tier 2 pension. Free, instant, accurate." />
+    <meta property="og:url" content="https://ghpay.app/" />
+    <meta property="og:site_name" content="Ghana Take-Home Pay Calculator" />
+    <meta property="og:locale" content="en_GH" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Ghana Take-Home Pay Calculator" />
+    <meta name="twitter:description" content="PAYE, SSNIT, Tier 2 pension — see your exact take-home pay in seconds." />
+
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="icon" href="/icon-192.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/icon-192.svg" />
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').catch(() => {});
+        });
+      }
+    </script>
   </body>
 </html>

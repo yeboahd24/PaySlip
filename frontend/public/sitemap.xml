@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://ghpay.app/</loc><priority>1.0</priority></url>
+  <url><loc>https://ghpay.app/compare</loc><priority>0.8</priority></url>
+  <url><loc>https://ghpay.app/bulk</loc><priority>0.8</priority></url>
+  <url><loc>https://ghpay.app/salary</loc><priority>0.9</priority></url>
+  <url><loc>https://ghpay.app/salary/1000</loc><priority>0.7</priority></url>
+  <url><loc>https://ghpay.app/salary/1500</loc><priority>0.7</priority></url>
+  <url><loc>https://ghpay.app/salary/2000</loc><priority>0.7</priority></url>
+  <url><loc>https://ghpay.app/salary/2500</loc><priority>0.7</priority></url>
+  <url><loc>https://ghpay.app/salary/3000</loc><priority>0.7</priority></url>
+  <url><loc>https://ghpay.app/salary/3500</loc><priority>0.7</priority></url>
+  <url><loc>https://ghpay.app/salary/4000</loc><priority>0.7</priority></url>
+  <url><loc>https://ghpay.app/salary/4500</loc><priority>0.7</priority></url>
+  <url><loc>https://ghpay.app/salary/5000</loc><priority>0.7</priority></url>
+  <url><loc>https://ghpay.app/salary/6000</loc><priority>0.7</priority></url>
+  <url><loc>https://ghpay.app/salary/7000</loc><priority>0.7</priority></url>
+  <url><loc>https://ghpay.app/salary/8000</loc><priority>0.7</priority></url>
+  <url><loc>https://ghpay.app/salary/9000</loc><priority>0.7</priority></url>
+  <url><loc>https://ghpay.app/salary/10000</loc><priority>0.7</priority></url>
+  <url><loc>https://ghpay.app/salary/12000</loc><priority>0.7</priority></url>
+  <url><loc>https://ghpay.app/salary/15000</loc><priority>0.7</priority></url>
+  <url><loc>https://ghpay.app/salary/20000</loc><priority>0.7</priority></url>
+  <url><loc>https://ghpay.app/salary/25000</loc><priority>0.7</priority></url>
+  <url><loc>https://ghpay.app/salary/30000</loc><priority>0.7</priority></url>
+  <url><loc>https://ghpay.app/salary/40000</loc><priority>0.7</priority></url>
+  <url><loc>https://ghpay.app/salary/50000</loc><priority>0.7</priority></url>
+  <url><loc>https://ghpay.app/salary/75000</loc><priority>0.7</priority></url>
+  <url><loc>https://ghpay.app/salary/100000</loc><priority>0.7</priority></url>
+</urlset>

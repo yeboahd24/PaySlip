@@ -19,7 +19,7 @@ export default function AllowanceList({ allowances, onChange }) {
 
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 mb-1">
+      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
         Allowances
       </label>
       <div className="space-y-2">
