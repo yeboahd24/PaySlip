@@ -39,3 +39,7 @@ export function calculateReverse(payload) {
 export function calculateBulk(payload) {
   return apiPost('/api/v1/calculate-bulk', payload);
 }
+
+export function getInsuranceSchemes() {
+  return apiGet('/api/v1/insurance-schemes');
+}

@@ -4,6 +4,7 @@ from app.config.tax_bands import (
     CURRENT_TAX_YEAR,
     EMPLOYER_SSNIT_RATE,
     HISTORIC_TAX_BANDS,
+    INSURANCE_SCHEMES,
     NON_RESIDENT_RATE,
     PERSONAL_RELIEF_MONTHLY,
     RELIEF_AMOUNTS,
@@ -27,7 +28,18 @@ from app.models.response import (
     YearComparison,
 )
 from app.services.paye import calculate_flat_paye, calculate_paye, calculate_paye_with_bands
-from app.services.ssnit import calculate_ssnit, calculate_tier2
+from app.services.ssnit import calculate_insurance, calculate_ssnit, calculate_tier2
+
+
+def _resolve_insurance(request: PayslipRequest, basic: float) -> tuple[float, float]:
+    """Resolve insurance rate and amount from request. Returns (rate, amount)."""
+    if not request.insurance_scheme:
+        return 0.0, 0.0
+    if request.insurance_scheme == "custom":
+        rate = request.insurance_custom_rate
+    else:
+        rate = INSURANCE_SCHEMES[request.insurance_scheme]["rate"]
+    return rate, calculate_insurance(basic, rate)
 
 
 def calculate_payslip(request: PayslipRequest) -> PayslipResponse:
@@ -44,12 +56,15 @@ def calculate_payslip(request: PayslipRequest) -> PayslipResponse:
     ssnit_amount = calculate_ssnit(basic)
     tier2_amount = calculate_tier2(basic)
 
+    # Insurance (on basic salary, tax-deductible)
+    insurance_rate, insurance_amount = _resolve_insurance(request, basic)
+
     if is_non_resident:
         # Non-residents: no reliefs, no tier 3, flat 25% tax
-        chargeable_income = round(max(gross_income - ssnit_amount, 0), 2)
+        chargeable_income = round(max(gross_income - ssnit_amount - insurance_amount, 0), 2)
         paye_result = calculate_flat_paye(chargeable_income, NON_RESIDENT_RATE)
 
-        total_deductions = round(ssnit_amount + tier2_amount + paye_result["total_tax"], 2)
+        total_deductions = round(ssnit_amount + tier2_amount + insurance_amount + paye_result["total_tax"], 2)
         net_take_home = round(gross_income - total_deductions, 2)
 
         employer_ssnit_amount = round(basic * EMPLOYER_SSNIT_RATE, 2)
@@ -65,6 +80,11 @@ def calculate_payslip(request: PayslipRequest) -> PayslipResponse:
                 ssnit=DeductionDetail(rate=SSNIT_RATE, amount=ssnit_amount, basis="Basic salary only"),
                 tier2_pension=DeductionDetail(rate=TIER2_RATE, amount=tier2_amount, basis="Basic salary only"),
                 tier3_pension=None,
+                insurance=DeductionDetail(
+                    rate=insurance_rate,
+                    amount=insurance_amount,
+                    basis="Basic salary only",
+                ) if insurance_amount > 0 else None,
                 paye=PAYEDetail(
                     chargeable_income=paye_result["chargeable_income"],
                     total_tax=paye_result["total_tax"],
@@ -116,16 +136,16 @@ def calculate_payslip(request: PayslipRequest) -> PayslipResponse:
 
     reliefs_applied["total"] = round(total_relief, 2)
 
-    # Chargeable income (Tier 3 is tax-deductible)
+    # Chargeable income (Tier 3 and insurance are tax-deductible)
     taxable_allowances = sum(a.amount for a in allowances if a.taxable)
-    chargeable_income = basic + taxable_allowances - ssnit_amount - tier3_amount - total_relief
+    chargeable_income = basic + taxable_allowances - ssnit_amount - tier3_amount - insurance_amount - total_relief
     chargeable_income = round(max(chargeable_income, 0), 2)
 
     # PAYE
     paye_result = calculate_paye(chargeable_income)
 
     # Total deductions
-    total_deductions = round(ssnit_amount + tier2_amount + tier3_amount + paye_result["total_tax"], 2)
+    total_deductions = round(ssnit_amount + tier2_amount + tier3_amount + insurance_amount + paye_result["total_tax"], 2)
     net_take_home = round(gross_income - total_deductions, 2)
 
     # Employer cost
@@ -164,6 +184,11 @@ def calculate_payslip(request: PayslipRequest) -> PayslipResponse:
                 amount=tier3_amount,
                 basis="Gross salary",
             ) if tier3_amount > 0 else None,
+            insurance=DeductionDetail(
+                rate=insurance_rate,
+                amount=insurance_amount,
+                basis="Basic salary only",
+            ) if insurance_amount > 0 else None,
             paye=PAYEDetail(
                 chargeable_income=paye_result["chargeable_income"],
                 total_tax=paye_result["total_tax"],
@@ -235,6 +260,9 @@ def reverse_calculate(request: ReverseRequest) -> ReverseResult:
     low = 0.0
     high = desired_net * 3  # Upper bound: assume at least 1/3 goes to tax
 
+    insurance_scheme = request.insurance_scheme
+    insurance_custom_rate = request.insurance_custom_rate
+
     for _ in range(100):  # Max iterations
         mid = (low + high) / 2
         trial_request = PayslipRequest(
@@ -242,6 +270,8 @@ def reverse_calculate(request: ReverseRequest) -> ReverseResult:
             allowances=allowances,
             reliefs=reliefs,
             is_non_resident=is_non_resident,
+            insurance_scheme=insurance_scheme,
+            insurance_custom_rate=insurance_custom_rate,
         )
         trial_result = calculate_payslip(trial_request)
         trial_net = trial_result.summary.net_take_home
@@ -259,6 +289,8 @@ def reverse_calculate(request: ReverseRequest) -> ReverseResult:
         allowances=allowances,
         reliefs=reliefs,
         is_non_resident=is_non_resident,
+        insurance_scheme=insurance_scheme,
+        insurance_custom_rate=insurance_custom_rate,
     )
     final_result = calculate_payslip(final_request)
 

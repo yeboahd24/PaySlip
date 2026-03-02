@@ -13,6 +13,8 @@ export default function CalculatorForm({ onSubmit, debouncedCalculate, loading, 
   const [reliefs, setReliefs] = useState(initialReliefs);
   const [bonus, setBonus] = useState('');
   const [tier3Rate, setTier3Rate] = useState('');
+  const [insuranceScheme, setInsuranceScheme] = useState('');
+  const [insuranceCustomRate, setInsuranceCustomRate] = useState('');
   const [isNonResident, setIsNonResident] = useState(false);
 
   const buildPayload = useCallback(() => {
@@ -22,7 +24,15 @@ export default function CalculatorForm({ onSubmit, debouncedCalculate, loading, 
       const validAllowances = allowances
         .filter((a) => a.name.trim() && parseFloat(a.amount) > 0)
         .map((a) => ({ name: a.name.trim(), amount: parseFloat(a.amount), taxable: a.taxable }));
-      return { desired_net: net, allowances: validAllowances, reliefs, is_non_resident: isNonResident };
+      const reversePayload = { desired_net: net, allowances: validAllowances, reliefs, is_non_resident: isNonResident };
+      if (insuranceScheme) {
+        reversePayload.insurance_scheme = insuranceScheme;
+        if (insuranceScheme === 'custom') {
+          const customRate = parseFloat(insuranceCustomRate);
+          if (customRate > 0) reversePayload.insurance_custom_rate = customRate / 100;
+        }
+      }
+      return reversePayload;
     }
 
     const basicSalary = parseFloat(salary);
@@ -37,8 +47,15 @@ export default function CalculatorForm({ onSubmit, debouncedCalculate, loading, 
       const t3 = parseFloat(tier3Rate);
       if (t3 > 0) payload.tier3_rate = t3 / 100;
     }
+    if (insuranceScheme) {
+      payload.insurance_scheme = insuranceScheme;
+      if (insuranceScheme === 'custom') {
+        const customRate = parseFloat(insuranceCustomRate);
+        if (customRate > 0) payload.insurance_custom_rate = customRate / 100;
+      }
+    }
     return payload;
-  }, [salary, desiredNet, allowances, reliefs, bonus, tier3Rate, mode, isNonResident]);
+  }, [salary, desiredNet, allowances, reliefs, bonus, tier3Rate, insuranceScheme, insuranceCustomRate, mode, isNonResident]);
 
   // Real-time calculation on any input change
   useEffect(() => {
@@ -46,7 +63,7 @@ export default function CalculatorForm({ onSubmit, debouncedCalculate, loading, 
     if (payload && debouncedCalculate) {
       debouncedCalculate(payload);
     }
-  }, [salary, desiredNet, allowances, reliefs, bonus, tier3Rate, mode, isNonResident, buildPayload, debouncedCalculate]);
+  }, [salary, desiredNet, allowances, reliefs, bonus, tier3Rate, insuranceScheme, insuranceCustomRate, mode, isNonResident, buildPayload, debouncedCalculate]);
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -157,6 +174,46 @@ export default function CalculatorForm({ onSubmit, debouncedCalculate, loading, 
             </span>
           </div>
           <p className="text-xs text-gray-400 mt-1">Max 16.5% of gross salary. Tax-deductible.</p>
+        </div>
+      )}
+
+      {/* Insurance Scheme */}
+      {mode === 'forward' && (
+        <div>
+          <label htmlFor="insurance-scheme" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <Tooltip text="Mandatory or voluntary insurance (e.g. GES Teacher's Insurance). The premium is calculated as a percentage of your basic salary only — allowances are excluded. It is deducted before tax, which lowers your chargeable income and reduces your PAYE.">
+              Insurance Scheme (Optional)
+            </Tooltip>
+          </label>
+          <select
+            id="insurance-scheme"
+            value={insuranceScheme}
+            onChange={(e) => setInsuranceScheme(e.target.value)}
+            className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-ghana-green focus:border-ghana-green outline-none transition dark:bg-gray-700 dark:text-white"
+          >
+            <option value="">None</option>
+            <option value="ges_teacher">GES Teacher's Insurance (1%)</option>
+            <option value="custom">Custom Rate</option>
+          </select>
+          {insuranceScheme === 'custom' && (
+            <div className="mt-2 relative">
+              <input
+                id="insurance-custom-rate"
+                type="number"
+                min="0"
+                max="100"
+                step="0.1"
+                placeholder="0"
+                value={insuranceCustomRate}
+                onChange={(e) => setInsuranceCustomRate(e.target.value)}
+                className="w-full pr-10 pl-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-ghana-green focus:border-ghana-green outline-none transition dark:bg-gray-700 dark:text-white"
+              />
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 font-medium text-sm">
+                %
+              </span>
+            </div>
+          )}
+          <p className="text-xs text-gray-400 mt-1">Deducted from basic salary. Tax-deductible.</p>
         </div>
       )}
 

@@ -3,6 +3,7 @@ from fastapi import APIRouter
 from app.config.tax_bands import (
     CURRENT_TAX_YEAR,
     HISTORIC_TAX_BANDS,
+    INSURANCE_SCHEMES,
     MONTHLY_TAX_BANDS,
     PERSONAL_RELIEF_MONTHLY,
     RELIEF_AMOUNTS,
@@ -53,6 +54,11 @@ def get_reliefs():
         "personal_relief_monthly": PERSONAL_RELIEF_MONTHLY,
         "optional_reliefs": RELIEF_AMOUNTS,
     }
+
+
+@router.get("/insurance-schemes")
+def get_insurance_schemes():
+    return {"schemes": INSURANCE_SCHEMES}
 
 
 @router.get("/health")

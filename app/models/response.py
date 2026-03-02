@@ -26,6 +26,7 @@ class Deductions(BaseModel):
     ssnit: DeductionDetail
     tier2_pension: DeductionDetail
     tier3_pension: Optional[DeductionDetail] = None
+    insurance: Optional[DeductionDetail] = None
     paye: PAYEDetail
 
 

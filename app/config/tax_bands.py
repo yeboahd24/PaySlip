@@ -56,3 +56,8 @@ TIER3_MAX_RATE = 0.165        # Up to 16.5% of gross salary, tax-deductible
 
 # Non-resident flat tax rate
 NON_RESIDENT_RATE = 0.25
+
+# Predefined insurance schemes (rate applied to basic salary, tax-deductible)
+INSURANCE_SCHEMES = {
+    "ges_teacher": {"name": "GES Teacher's Insurance", "rate": 0.01},
+}

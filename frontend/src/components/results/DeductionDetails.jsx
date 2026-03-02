@@ -16,9 +16,9 @@ function Row({ label, rate, amount, basis, tooltip }) {
 }
 
 export default function DeductionDetails({ deductions }) {
-  const { ssnit, tier2_pension, tier3_pension, paye } = deductions;
+  const { ssnit, tier2_pension, tier3_pension, insurance, paye } = deductions;
 
-  const total = ssnit.amount + tier2_pension.amount + (tier3_pension?.amount || 0) + paye.total_tax;
+  const total = ssnit.amount + tier2_pension.amount + (tier3_pension?.amount || 0) + (insurance?.amount || 0) + paye.total_tax;
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
@@ -44,6 +44,15 @@ export default function DeductionDetails({ deductions }) {
           amount={tier3_pension.amount}
           basis={tier3_pension.basis}
           tooltip="Voluntary Provident Fund. Your contributions are tax-deductible (up to 16.5% of gross salary), reducing your PAYE. Funds are managed by licensed trustees."
+        />
+      )}
+      {insurance && (
+        <Row
+          label="Insurance"
+          rate={insurance.rate}
+          amount={insurance.amount}
+          basis={insurance.basis}
+          tooltip="Insurance premium calculated as a percentage of your basic salary only. This deduction is tax-deductible — it reduces your chargeable income before PAYE is applied, so you pay less income tax."
         />
       )}
       <div className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-gray-700">
